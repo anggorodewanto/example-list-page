@@ -1,5 +1,8 @@
+let allProjects = [];
+
 document.addEventListener('DOMContentLoaded', async function() {
     await loadAndRenderProjects();
+    setupSearch();
 });
 
 async function loadAndRenderProjects() {
@@ -12,12 +15,51 @@ async function loadAndRenderProjects() {
         const yamlText = await response.text();
         const data = jsyaml.load(yamlText);
 
-        renderProjects(data.projects);
+        allProjects = data.projects;
+        renderProjects(allProjects);
     } catch (error) {
         console.error('Error loading projects:', error);
         const container = document.getElementById('projects-container');
         container.innerHTML = '<div class="empty-state">Error loading projects data</div>';
     }
+}
+
+function setupSearch() {
+    const searchInput = document.getElementById('search-input');
+
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        filterProjects(searchTerm);
+    });
+}
+
+function filterProjects(searchTerm) {
+    if (!searchTerm) {
+        renderProjects(allProjects);
+        return;
+    }
+
+    const filteredProjects = allProjects.map(project => {
+        const projectNameMatch = project.name.toLowerCase().includes(searchTerm);
+        const projectDescMatch = project.description.toLowerCase().includes(searchTerm);
+
+        const matchingRepos = project.repos.filter(repo =>
+            repo.name.toLowerCase().includes(searchTerm) ||
+            repo.language.toLowerCase().includes(searchTerm)
+        );
+
+        if (projectNameMatch || projectDescMatch || matchingRepos.length > 0) {
+            return {
+                ...project,
+                repos: matchingRepos.length > 0 ? matchingRepos : project.repos,
+                expanded: matchingRepos.length > 0
+            };
+        }
+
+        return null;
+    }).filter(project => project !== null);
+
+    renderProjects(filteredProjects);
 }
 
 function renderProjects(projects) {
@@ -93,6 +135,11 @@ function createProjectCard(project) {
                 toggleIcon.classList.add('expanded');
             }
         });
+
+        if (project.expanded) {
+            reposList.classList.add('active');
+            toggleIcon.classList.add('expanded');
+        }
     } else {
         const emptyState = document.createElement('div');
         emptyState.className = 'empty-state';
