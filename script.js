@@ -1,57 +1,158 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleButtons = document.querySelectorAll('.toggle');
-
-    toggleButtons.forEach(toggle => {
-        toggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            toggleList(this);
-        });
-    });
-
-    const itemTexts = document.querySelectorAll('.item-text:not(.no-children)');
-
-    itemTexts.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const toggle = this.previousElementSibling;
-            if (toggle && toggle.classList.contains('toggle')) {
-                toggleList(toggle);
-            }
-        });
-    });
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadAndRenderProjects();
 });
 
-function toggleList(toggleElement) {
-    const parentLi = toggleElement.parentElement;
-    const nestedUl = parentLi.querySelector('.nested');
+async function loadAndRenderProjects() {
+    try {
+        const response = await fetch('data.yaml');
+        if (!response.ok) {
+            throw new Error('Failed to load data.yaml');
+        }
 
-    if (!nestedUl) {
+        const yamlText = await response.text();
+        const data = jsyaml.load(yamlText);
+
+        renderProjects(data.projects);
+    } catch (error) {
+        console.error('Error loading projects:', error);
+        const container = document.getElementById('projects-container');
+        container.innerHTML = '<div class="empty-state">Error loading projects data</div>';
+    }
+}
+
+function renderProjects(projects) {
+    const container = document.getElementById('projects-container');
+    container.innerHTML = '';
+
+    if (!projects || projects.length === 0) {
+        container.innerHTML = '<div class="empty-state">No projects found</div>';
         return;
     }
 
-    const isExpanded = nestedUl.classList.contains('active');
+    projects.forEach(project => {
+        const projectCard = createProjectCard(project);
+        container.appendChild(projectCard);
+    });
+}
 
-    if (isExpanded) {
-        nestedUl.classList.remove('active');
-        toggleElement.classList.remove('expanded');
+function createProjectCard(project) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+
+    const header = document.createElement('div');
+    header.className = 'project-header';
+
+    const projectInfo = document.createElement('div');
+    projectInfo.className = 'project-info';
+
+    const projectTitle = document.createElement('div');
+    projectTitle.className = 'project-title';
+
+    const folderIcon = document.createElement('span');
+    folderIcon.className = 'folder-icon';
+    folderIcon.textContent = '📁';
+
+    const projectName = document.createElement('span');
+    projectName.className = 'project-name';
+    projectName.textContent = project.name;
+
+    projectTitle.appendChild(folderIcon);
+    projectTitle.appendChild(projectName);
+
+    const projectDescription = document.createElement('div');
+    projectDescription.className = 'project-description';
+    projectDescription.textContent = project.description;
+
+    projectInfo.appendChild(projectTitle);
+    projectInfo.appendChild(projectDescription);
+
+    const toggleIcon = document.createElement('div');
+    toggleIcon.className = 'toggle-icon';
+    toggleIcon.textContent = project.repos && project.repos.length > 0 ? '∧' : '∨';
+
+    header.appendChild(projectInfo);
+    header.appendChild(toggleIcon);
+
+    const reposList = document.createElement('div');
+    reposList.className = 'repos-list';
+
+    if (project.repos && project.repos.length > 0) {
+        project.repos.forEach(repo => {
+            const repoItem = createRepoItem(repo);
+            reposList.appendChild(repoItem);
+        });
+
+        header.addEventListener('click', () => {
+            const isActive = reposList.classList.contains('active');
+
+            if (isActive) {
+                reposList.classList.remove('active');
+                toggleIcon.classList.remove('expanded');
+            } else {
+                reposList.classList.add('active');
+                toggleIcon.classList.add('expanded');
+            }
+        });
     } else {
-        nestedUl.classList.add('active');
-        toggleElement.classList.add('expanded');
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.textContent = 'No repositories';
+        reposList.appendChild(emptyState);
+        header.style.cursor = 'default';
     }
+
+    card.appendChild(header);
+    card.appendChild(reposList);
+
+    return card;
 }
 
-function expandAll() {
-    const allNested = document.querySelectorAll('.nested');
-    const allToggles = document.querySelectorAll('.toggle');
+function createRepoItem(repo) {
+    const item = document.createElement('div');
+    item.className = 'repo-item';
 
-    allNested.forEach(ul => ul.classList.add('active'));
-    allToggles.forEach(toggle => toggle.classList.add('expanded'));
-}
+    const repoInfo = document.createElement('div');
+    repoInfo.className = 'repo-info';
 
-function collapseAll() {
-    const allNested = document.querySelectorAll('.nested');
-    const allToggles = document.querySelectorAll('.toggle');
+    const repoName = document.createElement('div');
+    repoName.className = 'repo-name';
+    repoName.textContent = repo.name;
 
-    allNested.forEach(ul => ul.classList.remove('active'));
-    allToggles.forEach(toggle => toggle.classList.remove('expanded'));
+    const repoMeta = document.createElement('div');
+    repoMeta.className = 'repo-meta';
+
+    const repoLanguage = document.createElement('div');
+    repoLanguage.className = 'repo-language';
+    repoLanguage.textContent = repo.language;
+
+    const separator = document.createElement('span');
+    separator.textContent = '•';
+
+    const repoUpdated = document.createElement('div');
+    repoUpdated.className = 'repo-updated';
+    repoUpdated.textContent = repo.updated;
+
+    repoMeta.appendChild(repoLanguage);
+    repoMeta.appendChild(separator);
+    repoMeta.appendChild(repoUpdated);
+
+    repoInfo.appendChild(repoName);
+    repoInfo.appendChild(repoMeta);
+
+    const viewLink = document.createElement('a');
+    viewLink.className = 'view-link';
+    viewLink.href = repo.url;
+    viewLink.target = '_blank';
+    viewLink.textContent = 'View';
+
+    const externalIcon = document.createElement('span');
+    externalIcon.className = 'external-icon';
+    externalIcon.textContent = '↗';
+
+    viewLink.appendChild(externalIcon);
+
+    item.appendChild(repoInfo);
+    item.appendChild(viewLink);
+
+    return item;
 }
