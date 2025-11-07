@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Nested List Browser</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Nested List Browser</h1>
+        <p class="subtitle">Click on any item with children to expand or collapse</p>
+
+        <ul class="nested-list">
+            <li>
+                <span class="toggle">▶</span>
+                <span class="item-text">Programming Languages</span>
+                <ul class="nested">
+                    <li>
+                        <span class="toggle">▶</span>
+                        <span class="item-text">Frontend</span>
+                        <ul class="nested">
+                            <li><span class="item-text no-children">JavaScript</span></li>
+                            <li><span class="item-text no-children">TypeScript</span></li>
+                            <li><span class="item-text no-children">HTML/CSS</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="toggle">▶</span>
+                        <span class="item-text">Backend</span>
+                        <ul class="nested">
+                            <li><span class="item-text no-children">Python</span></li>
+                            <li><span class="item-text no-children">Java</span></li>
+                            <li><span class="item-text no-children">Go</span></li>
+                            <li><span class="item-text no-children">Rust</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="toggle">▶</span>
+                        <span class="item-text">Mobile</span>
+                        <ul class="nested">
+                            <li><span class="item-text no-children">Swift</span></li>
+                            <li><span class="item-text no-children">Kotlin</span></li>
+                            <li><span class="item-text no-children">Dart</span></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <span class="toggle">▶</span>
+                <span class="item-text">Frameworks & Libraries</span>
+                <ul class="nested">
+                    <li>
+                        <span class="toggle">▶</span>
+                        <span class="item-text">JavaScript Frameworks</span>
+                        <ul class="nested">
+                            <li><span class="item-text no-children">React</span></li>
+                            <li><span class="item-text no-children">Vue</span></li>
+                            <li><span class="item-text no-children">Angular</span></li>
+                            <li><span class="item-text no-children">Svelte</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="toggle">▶</span>
+                        <span class="item-text">Backend Frameworks</span>
+                        <ul class="nested">
+                            <li><span class="item-text no-children">Express.js</span></li>
+                            <li><span class="item-text no-children">Django</span></li>
+                            <li><span class="item-text no-children">Flask</span></li>
+                            <li><span class="item-text no-children">Spring Boot</span></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <span class="toggle">▶</span>
+                <span class="item-text">Development Tools</span>
+                <ul class="nested">
+                    <li>
+                        <span class="toggle">▶</span>
+                        <span class="item-text">Version Control</span>
+                        <ul class="nested">
+                            <li><span class="item-text no-children">Git</span></li>
+                            <li><span class="item-text no-children">SVN</span></li>
+                            <li><span class="item-text no-children">Mercurial</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="toggle">▶</span>
+                        <span class="item-text">IDEs</span>
+                        <ul class="nested">
+                            <li><span class="item-text no-children">VS Code</span></li>
+                            <li><span class="item-text no-children">IntelliJ IDEA</span></li>
+                            <li><span class="item-text no-children">Sublime Text</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="toggle">▶</span>
+                        <span class="item-text">Build Tools</span>
+                        <ul class="nested">
+                            <li><span class="item-text no-children">Webpack</span></li>
+                            <li><span class="item-text no-children">Vite</span></li>
+                            <li><span class="item-text no-children">Gradle</span></li>
+                            <li><span class="item-text no-children">Maven</span></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
